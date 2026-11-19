@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Event Management Portal</title>
+
+  <style>
+    body {
+      margin: 0;
+      background: #f2f5fa;
+      color: #24324a;
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    header {
+      padding: 32px 20px;
+      background: #294b9b;
+      color: white;
+      text-align: center;
+    }
+
+    header img {
+      display: block;
+      width: 82px;
+      height: 82px;
+      margin: 0 auto 12px;wq
+      padding: 5px;
+      object-fit: contain;
+      background: white;
+      border-radius: 50%;
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 36px;
+    }
+
+    header p {
+      margin: 0;
+      color: #e2eaff;
+    }
+
+    nav {
+      padding: 14px;
+      background: white;
+      text-align: center;
+    }
+
+    nav a {
+      margin: 0 10px;
+      color: #294b9b;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    section {
+      max-width: 900px;
+      margin: 24px auto;
+      padding: 24px;
+      border: 1px solid #dce3ef;
+      border-radius: 10px;
+      background: white;
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #294b9b;
+    }
+
+    h3 {
+      margin-top: 22px;
+      color: #34415b;
+    }
+
+    #login {
+      max-width: 440px;
+      margin: 48px auto;
+    }
+
+    #login input {
+      box-sizing: border-box;
+      display: block;
+      margin: 6px 0 18px;
+    }
+
+    form label {
+      font-weight: bold;
+    }
+
+    form input,
+    form select {
+      box-sizing: border-box;
+      display: block;
+      width: 100%;
+      max-width: 500px;
+      margin: 6px 0 18px;
+      padding: 10px;
+      border: 1px solid #bdc9da;
+      border-radius: 5px;
+      font-size: 15px;
+    }
+
+    button {
+      padding: 11px 18px;
+      border: 0;
+      border-radius: 5px;
+      background: #294b9b;
+      color: white;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1e3978;
+    }
+
+    #portalContent {
+      display: none;
+    }
+
+    #organizerEventForm textarea {
+      box-sizing: border-box;
+      display: block;
+      width: 100%;
+      max-width: 500px;
+      margin: 6px 0 18px;
+      padding: 10px;
+      border: 1px solid #bdc9da;
+      border-radius: 5px;
+      font: inherit;
+      resize: vertical;
+    }
+
+    #organizerEventForm button + button {
+      margin-left: 8px;
+      background: #65738b;
+    }
+
+    .event-card {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      padding: 18px 0;
+    }
+
+    .event-card img {
+      width: 240px;
+      height: 170px;
+      flex: 0 0 240px;
+      object-fit: cover;
+      border-radius: 9px;
+    }
+
+    .event-card h3 {
+      position: relative;
+      display: inline-block;
+      margin-top: 0;
+      cursor: help;
+    }
+
+    .event-card h3[data-description]::after {
+      position: absolute;
+      z-index: 5;
+      top: calc(100% + 8px);
+      left: 0;
+      width: min(300px, 75vw);
+      padding: 10px 12px;
+      border-radius: 6px;
+      background: #24324a;
+      color: white;
+      content: attr(data-description);
+      font-size: 14px;
+      font-weight: normal;
+      line-height: 1.45;
+      white-space: normal;
+      box-shadow: 0 4px 14px rgba(20, 35, 60, 0.22);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+    }
+
+    .event-card h3[data-description]:hover::after,
+    .event-card h3[data-description]:focus::after {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .event-card h3[data-description]:focus {
+      outline: 2px solid #294b9b;
+      outline-offset: 3px;
+    }
+
+    .event-card p {
+      margin: 7px 0;
+    }
+
+    #events hr {
+      border: 0;
+      border-top: 1px solid #e3e8f0;
+    }
+
+    #dashboard li {
+      margin-bottom: 8px;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 28px;
+      }
+
+      section {
+        margin: 16px 12px;
+        padding: 18px;
+      }
+
+      nav a {
+        display: inline-block;
+        margin: 4px 6px;
+      }
+
+      .event-card {
+        display: block;
+      }
+
+      .event-card img {
+        width: 100%;
+        height: 200px;
+        margin-bottom: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header id="loginHeader">
+    <img
+      src="https://www.lpu.in/lpu-assets/images/media-kit/lpu-logo.jpg"
+      alt="Lovely Professional University logo"
+    >
+    <h1>Campus Event Management Portal</h1>
+    <p>Discover, Register and Participate in Campus Events</p>
+  </header>
+
+  <section id="login">
+    <h2 id="loginTitle">Student Login</h2>
+    <p id="loginMessage">Sign in with your registration number and password.</p>
+
+    <form id="loginForm">
+      <label for="loginRole">Login as:</label>
+      <select id="loginRole" name="loginRole" required>
+        <option value="student" selected>Student</option>
+        <option value="organizer">Organiser</option>
+      </select>
+
+      <label for="registrationNumber">Registration Number:</label>
+      <input
+        type="text"
+        id="registrationNumber"
+        name="registrationNumber"
+        autocomplete="username"
+        required
+      >
+
+      <label for="password">Password:</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        autocomplete="current-password"
+        required
+      >
+
+      <button type="submit">Log In</button>
+    </form>
+  </section>
+
+  <div id="portalContent">
+    <header>
+      <img
+        src="https://www.lpu.in/lpu-assets/images/media-kit/lpu-logo.jpg"
+        alt="Lovely Professional University logo"
+      >
+      <h1>Campus Event Management Portal</h1>
+      <p>Discover, Register and Participate in Campus Events</p>
+    </header>
+
+    <nav>
+      <a href="#home">Home</a> |
+      <a href="#events">Events</a> |
+      <a id="registerNavLink" href="#register">Register</a> |
+      <a id="dashboardNavLink" href="#dashboard">Dashboard</a>
+    </nav>
+
+    <section id="home">
+      <h2>Welcome to Our Campus</h2>
+      <p>
+        Explore college fests, workshops, seminars and competitions.
+        Register online for upcoming events.
+      </p>
+    </section>
+
+    <section id="events">
+      <h2>Upcoming Events</h2>
+
+      <article class="event-card">
+        <img
+          src="https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=900&q=85"
+          alt="Crowd enjoying a live music festival"
+          loading="lazy"
+        >
+        <div>
+          <h3 tabindex="0"
+              title="A cultural fest featuring music, dance and entertainment."
+              data-description="A cultural fest featuring music, dance and entertainment.">
+            1. Annual College Fest
+          </h3>
+          <p>Date: 15 November 2026</p>
+          <p>Venue: College Auditorium</p>
+          <p>A cultural fest featuring music, dance and entertainment.</p>
+          <p>Available Seats: 50</p>
+          <a href="#register">Register</a>
+        </div>
+      </article>
+
+      <hr>
+
+      <article class="event-card">
+        <img
+          src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=85"
+          alt="Laptop set up for a web development workshop"
+          loading="lazy"
+        >
+        <div>
+          <h3 tabindex="0"
+              title="Learn the basics of HTML, CSS and JavaScript."
+              data-description="Learn the basics of HTML, CSS and JavaScript.">
+            2. Web Development Workshop
+          </h3>
+          <p>Date: 20 November 2026</p>
+          <p>Venue: Computer Lab</p>
+          <p>Learn the basics of HTML, CSS and JavaScript.</p>
+          <p>Available Seats: 30</p>
+          <a href="#register">Register</a>
+        </div>
+      </article>
+
+      <hr>
+
+      <article class="event-card">
+        <img
+          src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=900&q=85"
+          alt="Students collaborating during a technical quiz"
+          loading="lazy"
+        >
+        <div>
+          <h3 tabindex="0"
+              title="Test your technical knowledge and win prizes."
+              data-description="Test your technical knowledge and win prizes.">
+            3. Technical Quiz Competition
+          </h3>
+          <p>Date: 25 November 2026</p>
+          <p>Venue: Seminar Hall</p>
+          <p>Test your technical knowledge and win prizes.</p>
+          <p>Available Seats: 20</p>
+          <a href="#register">Register</a>
+        </div>
+      </article>
+    </section>
+
+    <section id="dashboard">
+      <h2>Organiser Dashboard</h2>
+      <h3>Add an Event</h3>
+      <p>Enter the event details below to publish it on the upcoming events page.</p>
+
+      <form id="organizerEventForm">
+        <label for="organizerEventName">Event Name:</label>
+        <input type="text" id="organizerEventName" name="eventName"
+               maxlength="100" required>
+
+        <label for="organizerEventDescription">Description:</label>
+        <textarea id="organizerEventDescription" name="description"
+                  rows="4" maxlength="1000" required></textarea>
+
+        <label for="organizerEventSeats">Seats Available:</label>
+        <input type="number" id="organizerEventSeats" name="seats"
+               min="1" step="1" required>
+
+        <label for="organizerEventDate">Event Date:</label>
+        <input type="date" id="organizerEventDate" name="date" required>
+
+        <label for="organizerEventVenue">Venue:</label>
+        <input type="text" id="organizerEventVenue" name="venue"
+               maxlength="150" required>
+
+        <button type="submit">Add Event</button>
+        <button type="reset">Clear Form</button>
+        <p id="eventFormMessage" role="status" aria-live="polite"></p>
+      </form>
+
+      <h3>Current Upcoming Events</h3>
+      <ul id="organizerEventsList">
+        <li>Annual College Fest: 50 seats</li>
+        <li>Web Development Workshop: 30 seats</li>
+        <li>Technical Quiz Competition: 20 seats</li>
+      </ul>
+    </section>
+
+    <section id="register">
+      <h2>Student Registration</h2>
+
+      <form id="eventRegistrationForm">
+        <label for="studentName">Student Name:</label>
+        <input type="text" id="studentName" name="studentName" required>
+
+        <label for="studentEmail">Student Email:</label>
+        <input type="email" id="studentEmail" name="studentEmail" required>
+
+        <label for="rollNumber">Registration Number:</label>
+        <input type="text" id="rollNumber" name="rollNumber" required>
+
+        <label for="eventName">Select Event:</label>
+        <select id="eventName" name="eventName" required>
+          <option value="">-- Select Event --</option>
+          <option value="Annual College Fest">Annual College Fest — seats available: 30</option>
+          <option value="Web Development Workshop">Web Development Workshop — seats available: 10</option>
+          <option value="Technical Quiz Competition">Technical Quiz Competition — seats available: 3</option>
+        </select>
+
+        <button type="submit">Register Now</button>
+        <button type="reset">Clear Form</button>
+      </form>
+    </section>
+
+    <section id="confirmation" aria-live="polite">
+      <h2>Pending Registration Confirmation</h2>
+      <p id="confirmationMessage">Your registration details will be confirmed by the event organizer.</p>
+      <div id="pendingRegistrationDetails"></div>
+    </section>
+  </div>
+
+  <script>
+    const loginRoleSelect = document.getElementById("loginRole");
+
+    loginRoleSelect.addEventListener("change", function () {
+      const isOrganizer = this.value === "organizer";
+
+      document.getElementById("loginTitle").textContent =
+        isOrganizer ? "Organiser Login" : "Student Login";
+
+      document.getElementById("loginMessage").textContent =
+        isOrganizer
+          ? "Sign in to manage your campus events."
+          : "Sign in with your registration number and password.";
+    });
+
+    document
+      .getElementById("loginForm")
+      .addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        if (!this.reportValidity()) return;
+
+        const isOrganizer = loginRoleSelect.value === "organizer";
+
+        document.getElementById("loginHeader").style.display = "none";
+        document.getElementById("login").style.display = "none";
+        document.getElementById("portalContent").style.display = "block";
+        document.getElementById("dashboard").style.display =
+          isOrganizer ? "block" : "none";
+        document.getElementById("dashboardNavLink").style.display =
+          isOrganizer ? "inline" : "none";
+        document.getElementById("registerNavLink").style.display =
+          isOrganizer ? "none" : "inline";
+
+        window.scrollTo(0, 0);
+      });
+
+    const createdEventsStorageKey = "campusPortalCreatedEvents";
+    const organizerEventForm = document.getElementById("organizerEventForm");
+    const upcomingEventsSection = document.getElementById("events");
+    const studentEventSelect = document.getElementById("eventName");
+    const organizerEventsList = document.getElementById("organizerEventsList");
+
+    function loadCreatedEvents() {
+      try {
+        const savedEvents = JSON.parse(
+          localStorage.getItem(createdEventsStorageKey) || "[]"
+        );
+        if (!Array.isArray(savedEvents)) return [];
+
+        // Remove the saved event dated 12 April 2026 and the event with venue 22.
+        const remainingEvents = savedEvents.filter(
+          savedEvent => savedEvent.date !== "2026-04-12" && String(savedEvent.venue || "").trim() !== "22"
+        );
+
+        if (remainingEvents.length !== savedEvents.length) {
+          localStorage.setItem(
+            createdEventsStorageKey,
+            JSON.stringify(remainingEvents)
+          );
+        }
+
+        return remainingEvents;
+      } catch {
+        return [];
+      }
+    }
+
+    function addEventToPortal(createdEvent) {
+      const eventCard = document.createElement("article");
+      eventCard.className = "event-card";
+
+      const details = document.createElement("div");
+      const heading = document.createElement("h3");
+      heading.textContent = createdEvent.name;
+      heading.dataset.description = createdEvent.description;
+      heading.title = createdEvent.description;
+      heading.tabIndex = 0;
+      details.appendChild(heading);
+
+      const date = document.createElement("p");
+      date.textContent =
+        "Date: " + new Date(createdEvent.date + "T00:00:00").toLocaleDateString();
+      details.appendChild(date);
+
+      const venue = document.createElement("p");
+      venue.textContent = "Venue: " + createdEvent.venue;
+      details.appendChild(venue);
+
+      const description = document.createElement("p");
+      description.textContent = createdEvent.description;
+      details.appendChild(description);
+
+      const seats = document.createElement("p");
+      seats.textContent = "Available Seats: " + createdEvent.seats;
+      details.appendChild(seats);
+
+      const registerLink = document.createElement("a");
+      registerLink.href = "#register";
+      registerLink.textContent = "Register";
+      details.appendChild(registerLink);
+
+      eventCard.appendChild(details);
+      upcomingEventsSection.appendChild(document.createElement("hr"));
+      upcomingEventsSection.appendChild(eventCard);
+
+      const option = document.createElement("option");
+      option.value = createdEvent.name;
+      option.textContent =
+        createdEvent.name + " — seats available: " + createdEvent.seats;
+      studentEventSelect.appendChild(option);
+
+      const listItem = document.createElement("li");
+      listItem.textContent =
+        createdEvent.name + ": " + createdEvent.seats + " seats";
+      organizerEventsList.appendChild(listItem);
+    }
+
+    loadCreatedEvents().forEach(addEventToPortal);
+
+    const today = new Date();
+    const localToday = new Date(
+      today.getTime() - today.getTimezoneOffset() * 60000
+    ).toISOString().slice(0, 10);
+    document.getElementById("organizerEventDate").min = localToday;
+
+    organizerEventForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+      if (!this.reportValidity()) return;
+
+      const createdEvent = {
+        name: document.getElementById("organizerEventName").value.trim(),
+        description: document
+          .getElementById("organizerEventDescription")
+          .value.trim(),
+        seats: Number(
+          document.getElementById("organizerEventSeats").value
+        ),
+        date: document.getElementById("organizerEventDate").value,
+        venue: document.getElementById("organizerEventVenue").value.trim()
+      };
+
+      if (
+        !createdEvent.name ||
+        !createdEvent.description ||
+        !createdEvent.venue ||
+        !Number.isInteger(createdEvent.seats) ||
+        createdEvent.seats < 1
+      ) {
+        return;
+      }
+
+      const existingEvents = loadCreatedEvents();
+
+      if (
+        existingEvents.some(
+          saved => saved.name.toLowerCase() === createdEvent.name.toLowerCase()
+        )
+      ) {
+        document.getElementById("eventFormMessage").textContent =
+          "An event with that name already exists. Please choose another name.";
+        return;
+      }
+
+      existingEvents.push(createdEvent);
+
+      try {
+        localStorage.setItem(
+          createdEventsStorageKey,
+          JSON.stringify(existingEvents)
+        );
+      } catch {
+        document.getElementById("eventFormMessage").textContent =
+          "This browser could not save the event. Please check its storage settings.";
+        return;
+      }
+
+      addEventToPortal(createdEvent);
+      this.reset();
+
+      document.getElementById("eventFormMessage").textContent =
+        "Event added to Upcoming Events and the student registration list.";
+    });
+
+    document
+      .getElementById("eventRegistrationForm")
+      .addEventListener("submit", function (event) {
+        event.preventDefault();
+        if (!this.reportValidity()) return;
+
+        const registration = {
+          studentName: document.getElementById("studentName").value.trim(),
+          studentEmail: document.getElementById("studentEmail").value.trim(),
+          rollNumber: document.getElementById("rollNumber").value.trim(),
+          eventName: studentEventSelect.value
+        };
+
+        const details = document.getElementById("pendingRegistrationDetails");
+        details.replaceChildren();
+
+        const list = document.createElement("dl");
+        [
+          ["Student Name", registration.studentName],
+          ["Student Email", registration.studentEmail],
+          ["Registration Number", registration.rollNumber],
+          ["Event", registration.eventName],
+          ["Status", "Pending confirmation"]
+        ].forEach(([label, value]) => {
+          const term = document.createElement("dt");
+          term.textContent = label;
+
+          const description = document.createElement("dd");
+          description.textContent = value;
+
+          list.append(term, description);
+        });
+
+        details.appendChild(list);
+        document.getElementById("confirmationMessage").textContent =
+          "Your registration request has been recorded. The event organizer will confirm it.";
+
+        document.getElementById("confirmation").scrollIntoView({
+          behavior: "smooth"
+        });
+      });
+  </script>
+</body>
+</html> 
